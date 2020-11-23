@@ -133,3 +133,8 @@ rm(pct)
 
 # Remove non-European dataframes and lists
 rm(countries, data_all, policies, worldbank)
+
+# Ungroup dataframes
+data_eur <- data_eur %>% ungroup
+policies_eur <- policies_eur %>% ungroup
+worldbank_eur <- worldbank_eur %>% ungroup
