@@ -2,14 +2,25 @@
 # Setup
 # ------------------------------------------------------------------------------
 
-# Run source code to import/format data
-source("./Code/Format data.R")
+# Restore package library to last snapshot
+packrat::restore()
 
-# Load additional required packages
-library(lspline); library(forecast)
+# Load required packages
+library(tidyverse); library(lspline); library(forecast)
 
-# Set storage directory for outputs
-out <- paste0("./Results/")
+# Define storage directory for formatted data
+data_directory_f <- paste0("./Data/Formatted/")
+
+# Define storage directory for results
+results_directory <- paste0("./Results/")
+
+# Load formatted data
+data_eur <- read_csv(paste0(data_directory_f, "Cases_deaths_data_europe.csv"))
+policies_eur <- read_csv(paste0(data_directory_f, "Policy_data_europe.csv")) 
+worldbank_eur <- read_csv(paste0(data_directory_f, "Worldbank_data_europe.csv"))
+
+# Load list of European countries for which we have both cases/deaths data and policy data
+load(paste0(results_directory, "countries_eur.RData"))
 
 ## Functions -------------------------------------------------------------------
 
@@ -292,8 +303,10 @@ summary_eur <- summary_eur %>% group_by(Country) %>%
   relocate(Date_T, .before = Max_number_restrictions) %>% ungroup
 
 # Determine European countries which entered lockdown
+# and save list to Results folder
 countries_eur_lockdown <- summary_eur %>% filter(!is.na(Date_lockdown)) %>% 
   pull(Country) %>% as.character %>% as.list
+save(countries_eur_lockdown, file = paste0(results_directory, "countries_eur_lockdown.RData"))
 ## print note about any countries which did not enter lockdown:
 if (length(countries_eur_lockdown) != length(countries_eur)) {
   unavail <- setdiff(unlist(countries_eur), unlist(countries_eur_lockdown))
@@ -303,7 +316,7 @@ if (length(countries_eur_lockdown) != length(countries_eur)) {
 } 
 
 # Export summary table
-write_csv(summary_eur, file = paste0(out, "Country summaries.csv"))
+write_csv(summary_eur, file = paste0(results_directory, "Country summaries.csv"))
 
 # ------------------------------------------------------------------------------
 # Estimate knot points
@@ -683,4 +696,4 @@ knots_best <- knots_best %>% mutate(Prob_min = min(Prob_unequal),
   select(-c(Prob_min, Mult))
 
 # Export knots_best dataframe
-write_csv(knots_best, file = paste0(out, "Best knot points.csv"))
+write_csv(knots_best, file = paste0(results_directory, "Best knot points.csv"))
