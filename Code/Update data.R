@@ -20,8 +20,8 @@ packrat::restore()
 # Load required packages
 library(tidyverse); library(wbstats); library(sjlabelled)
 
-# Define project directory where data is located
-data_directory <- paste0("./Data/")
+# Define project directory where unformatted data is located
+data_directory_u <- paste0("./Data/Unformatted/")
 
 # ------------------------------------------------------------------------------
 # Import data
@@ -30,7 +30,7 @@ data_directory <- paste0("./Data/")
 ## Cases and deaths data -------------------------------------------------------
 
 # Set storage directory for saved data
-out <- paste0(data_directory, "CSSE data/")
+out <- paste0(data_directory_u, "CSSE data/")
 
 # Define web repository where CSSE data is located
 source <- paste0("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/")
@@ -51,7 +51,7 @@ for (i in filenames) {
 ## Policy data -----------------------------------------------------------------
 
 # Set storage directory for saved data
-out <- paste0(data_directory, "OxCGRT data/")
+out <- paste0(data_directory_u, "OxCGRT data/")
 
 # Define web repository where OxCGRT data is located
 source <- paste0("https://raw.githubusercontent.com/OxCGRT/covid-policy-tracker/master/data/")
@@ -73,7 +73,7 @@ for (i in filenames) {
 ## World Bank data -------------------------------------------------------------
 
 # Set storage directory for saved data
-out <- paste0(data_directory, "World Bank data/")
+out <- paste0(data_directory_u, "World Bank data/")
 
 # Download data - population size
 data <- wb_data(indicator = "SP.POP.TOTL", mrv = 1) %>%
@@ -89,4 +89,4 @@ data <- data %>% select(contains("iso"), Country, Year, Population)
 write_csv(x = data, file = paste0(out, "Worldbank_data.csv"))
 
 # Remove variables from environment
-rm(data_directory, out, source, filenames, i, filenames_i, data)
+rm(data_directory_u, out, source, filenames, i, filenames_i, data)
