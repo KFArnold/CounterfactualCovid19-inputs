@@ -24,21 +24,30 @@ countries <- list("Albania", "Andorra", "Austria", "Belarus", "Belgium",
                   "Serbia", "Slovak Republic", "Slovenia", "Spain", "Sweden", 
                   "Switzerland", "Ukraine", "United Kingdom")
 
+# Define project directory where unformatted data is located
+data_directory_u <- paste0("./Data/Unformatted/")
+
+# Define storage directory for formatted data
+data_directory_f <- paste0("./Data/Formatted/")
+
+# Define storage directory for results
+results_directory <- paste0("./Results/")
+
 # ------------------------------------------------------------------------------
 # Import and format data
 # ------------------------------------------------------------------------------
 
-# Load data
+# Load unformatted data
 ## (1) CSSE data (cumulative cases and deaths)
-cases <- read_csv("./Data/CSSE data/time_series_covid19_confirmed_global.csv")
-deaths <- read_csv("./Data/CSSE data/time_series_covid19_deaths_global.csv")
+cases <- read_csv(paste0(data_directory_u, "CSSE data/time_series_covid19_confirmed_global.csv"))
+deaths <- read_csv(paste0(data_directory_u, "CSSE data/time_series_covid19_deaths_global.csv"))
 ## (2) OxCGRT data (government policies)
-policies <- read_csv("./Data/OxCGRT data/OxCGRT_latest.csv",
+policies <- read_csv(paste0(data_directory_u, "OxCGRT data/OxCGRT_latest.csv"),
                      col_types = cols(RegionName = col_character(),
                                       RegionCode = col_character())) %>% 
   mutate(Date = as.Date(as.character(Date), format = "%Y%m%d"))
 ## World Bank data (population size)
-worldbank <- read_csv("./Data/World Bank data/Worldbank_data.csv")
+worldbank <- read_csv(paste0(data_directory_u, "World Bank data/Worldbank_data.csv"))
 
 # Convert datasets to long form, select relevant variables, 
 # rename country variable, convert characters to factors,
@@ -105,8 +114,10 @@ data_eur <- data_all %>% filter(Country %in% countries) %>% ungroup(Province_Sta
 policies_eur <- policies %>% filter(Country %in% countries) %>% ungroup(Province_State) %>%
   filter(is.na(Province_State)) %>% select(-Province_State) %>% droplevels
 
-# Create list of European countries for which we have both cases/deaths data and policy data
+# Create list of European countries for which we have both cases/deaths data and policy data,
+# and save to Results folder
 countries_eur <- as.list(intersect(levels(data_eur$Country), levels(policies_eur$Country)))
+save(countries_eur, file = paste0(results_directory, "countries_eur.RData"))
 #### print note about any countries which both are not avaiable:
 ##if (length(countries_eur) != length(countries)) {
 ##  unavail <- setdiff(levels(data_eur$Country), levels(policies_eur$Country))
@@ -134,7 +145,7 @@ rm(pct)
 # Remove non-European dataframes and lists
 rm(countries, data_all, policies, worldbank)
 
-# Ungroup dataframes
-data_eur <- data_eur %>% ungroup
-policies_eur <- policies_eur %>% ungroup
-worldbank_eur <- worldbank_eur %>% ungroup
+# Save formatted data to project directory
+write_csv(x = data_eur, file = paste0(data_directory_f, "Cases_deaths_data_europe.csv"))
+write_csv(x = policies_eur, file = paste0(data_directory_f, "Policy_data_europe.csv"))
+write_csv(x = worldbank_eur, file = paste0(data_directory_f, "Worldbank_data_europe.csv"))
