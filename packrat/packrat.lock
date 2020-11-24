@@ -1,6 +1,6 @@
 PackratFormat: 1.4
-PackratVersion: 0.5.0
-RVersion: 4.0.0
+PackratVersion: 0.5.0.30
+RVersion: 4.0.3
 Repos: CRAN=https://cran.rstudio.com/
 
 Package: BH
@@ -464,9 +464,18 @@ Hash: 8b12eb01162305307aac600cef3ff6e4
 Requires: Rcpp, stringi, zip
 
 Package: packrat
-Source: CRAN
-Version: 0.5.0
-Hash: 498643e765d1442ba7b1160a1df3abf9
+Source: github
+Version: 0.5.0-30
+Hash: c6f790247ff32c85f1bb38e3ef147b85
+GithubRepo: packrat
+GithubUsername: rstudio
+GithubRef: HEAD
+GithubSha1: 99bbeb0ccbf03a29ce29f2a2e395c976c2956319
+RemoteHost: api.github.com
+RemoteRepo: packrat
+RemoteUsername: rstudio
+RemoteRef: HEAD
+RemoteSha: 99bbeb0ccbf03a29ce29f2a2e395c976c2956319
 
 Package: pbkrtest
 Source: CRAN
