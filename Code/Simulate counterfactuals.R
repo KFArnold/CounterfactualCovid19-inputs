@@ -2,18 +2,27 @@
 # Set up
 # ------------------------------------------------------------------------------
 
-# Run source code to import/format data
-source("./Code/Format data.R")
+# Restore package library to last snapshot
+packrat::restore()
 
-# Load additional required packages
-library(scales); library(ggpubr)
+# Load required packages
+library(tidyverse); library(scales); library(ggpubr)
 
-# Set storage directory for outputs
-out <- paste0("./Results/")
+# Define storage directory for formatted data
+data_directory_f <- paste0("./Data/Formatted/")
+
+# Define storage directory for results
+results_directory <- paste0("./Results/")
+
+# Load formatted data
+data_eur <- read_csv(paste0(data_directory_f, "Cases_deaths_data_europe.csv"))
 
 # Import files containing best knot point pairs and country summaries
-knots_best <- read_csv(paste0(out, "Best knot points.csv"))
-summary_eur <- read_csv(paste0(out, "Country summaries.csv"))
+knots_best <- read_csv(paste0(results_directory, "Best knot points.csv"))
+summary_eur <- read_csv(paste0(results_directory, "Country summaries.csv"))
+
+# Load list of European countries for which we have both cases/deaths data and policy data
+load(paste0(results_directory, "countries_eur.RData"))
 
 # ------------------------------------------------------------------------------
 # Simulation
@@ -28,7 +37,7 @@ country <- "Germany"
 
 # Filter datasets by country
 knots_best_country <- knots_best %>% filter(Country == country)  # best knots
-data_eur_country <- data_eur %>% filter(Country == country)  # cases/deaths data -- is all this necessary?
+data_eur_country <- data_eur %>% filter(Country == country)  # cases/deaths data 
 summary_eur_country <- summary_eur %>% filter(Country == country)
 
 # Record important dates
